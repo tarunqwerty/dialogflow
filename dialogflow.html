@@ -1,29 +1,101 @@
+<!DOCTYPE html>
 <html>
-    <body>
-<link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
-<script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
-<df-messenger
-  location="us-central1"
-  project-id="dialogflowcx1-397209"
-  agent-id="f6788fa7-a516-4c13-acaf-6f992295e73d"
-  language-code="en"
-  max-query-length="-1">
-  <df-messenger-chat-bubble
-    chat-title="Smart Health Assistant Bot">
-  </df-messenger-chat-bubble>
-</df-messenger>
-<style>
-  df-messenger {
-    z-index: 999;
-    position: fixed;
-    --df-messenger-font-color: #000;
-    --df-messenger-font-family: Google Sans;
-    --df-messenger-chat-background: #f3f6fc;
-    --df-messenger-message-user-background: #d3e3fd;
-    --df-messenger-message-bot-background: #fff;
-    bottom: 16px;
-    right: 16px;
-  }
-</style>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Smart Health Assistant</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.js"></script>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="https://www.gstatic.com/firebasejs/ui/6.0.2/firebase-ui-auth.css"
+    />
+
+    <!-- Dialogflow Messenger -->
+    <link
+      rel="stylesheet"
+      href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css"
+    />
+    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+
+    <style>
+      df-messenger {
+        z-index: 999;
+        position: fixed;
+        --df-messenger-font-color: #000;
+        --df-messenger-font-family: Google Sans;
+        --df-messenger-chat-background: #f3f6fc;
+        --df-messenger-message-user-background: #d3e3fd;
+        --df-messenger-message-bot-background: #fff;
+        bottom: 16px;
+        right: 16px;
+      }
+
+      #login-container {
+        margin: 50px auto;
+        width: 300px;
+        text-align: center;
+      }
+
+      #bot-container {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="login-container"></div>
+
+    <div id="bot-container">
+      <df-messenger
+        location="us-central1"
+        project-id="dialogflowcx1-397209"
+        agent-id="f6788fa7-a516-4c13-acaf-6f992295e73d"
+        language-code="en"
+        max-query-length="-1"
+      >
+        <df-messenger-chat-bubble
+          chat-title="Smart Health Assistant Bot"
+        ></df-messenger-chat-bubble>
+      </df-messenger>
+    </div>
+
+    <script>
+      // Replace with your Firebase config
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC7d3sUpDxcEJuV9yn8fTjoxKunCYaqh8Q",
+        authDomain: "dialogflowcx1-397209.firebaseapp.com",
+        projectId: "dialogflowcx1-397209",
+        storageBucket: "dialogflowcx1-397209.firebasestorage.app",
+        messagingSenderId: "327307643203",
+        appId: "1:327307643203:web:af012ef4c8f87bdb03c7f6",
+        measurementId: "G-FY0JGPK6N4",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      const ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          document.getElementById("login-container").style.display = "none";
+          document.getElementById("bot-container").style.display = "block";
+        } else {
+          document.getElementById("bot-container").style.display = "none";
+          ui.start("#login-container", {
+            signInOptions: [
+              firebase.auth.EmailAuthProvider.PROVIDER_ID,
+              firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+              firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+            ],
+            signInSuccessUrl: window.location.href,
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
